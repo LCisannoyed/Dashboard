@@ -1,0 +1,100 @@
+---
+title: "Dash"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    
+  runtime: shiny
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+library(flexdashboard)
+library(TAM)
+library(DT)
+library(tidyverse)
+library(WrightMap)
+
+# load functions
+source("0. functions.R")
+
+# load sample Data from TAM
+data(data.cqc01)
+dat <- data.cqc01
+names(dat) <- gsub("BSM","",names(dat))
+
+# start Tam analysis
+mod01 <- TAM::tam(dat, item.elim=FALSE)
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Item Stats
+
+```{r, include=FALSE, echo=FALSE}
+
+itemStats<-cbind(mod01$item,mod01$xsi)  %>%
+  select(item , N , M , xsi , se.xsi) %>% 
+  mutate(M=100*.$M)  
+
+names(itemStats) <- c("item","N","facility","threshold","se")
+
+```
+
+```{r , echo=FALSE, cache=FALSE, results=TRUE, warning=FALSE, comment=FALSE, warning=FALSE}
+
+DT::datatable(
+      itemStats,
+      options = list(
+        pageLength = 30,
+        scrollY = '600px',
+        scrollX = TRUE,
+        paging = FALSE,
+        autoWidth = TRUE,
+        columnDefs = list(list(
+          width = '10px', targets = "_all"
+        ))
+      ),
+      rownames = TRUE,
+      selection = 'single') %>%
+    formatRound( columns=c('threshold', 'se'), digits=3) %>%
+    formatRound( columns=c('facility'), digits=2)
+    
+```
+
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Wright Map
+
+```{r, include=FALSE, echo=FALSE}
+
+# Ability estimate - Weighted Likelihood Estimate
+Abil <- TAM::tam.wle(mod01)
+## @knitr wrightmap
+thr <- TAM::tam.threshold(mod01)
+```
+
+```{r , echo=FALSE, cache=FALSE, results=FALSE, warning=FALSE, comment=FALSE, warning=FALSE}
+WrightMap::wrightMap(Abil$theta, thr, 
+                         mainTitle = "Wright Map", 
+                         item.side = itemClassic.LC, 
+                         show.thr.lab = TRUE, 
+                         show.thr.sym = FALSE, 
+                         width = 2, 
+                         height = 2, 
+                         dim.color = "lightgreen")
+
+
+```
+
+
+### Chart C
+
+```{r}
+
+```
+
