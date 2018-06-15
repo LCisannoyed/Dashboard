@@ -76,4 +76,8 @@ names(itemStats) <- c("item","N","facility","threshold","se")
 itemStats
 
 library(DT)
-install.packages('DT')
+remove.packages('ggplot')
+install.packages("ggplot2")
+library(ggplot2)
+library(magrittr)
+library(dplyr)

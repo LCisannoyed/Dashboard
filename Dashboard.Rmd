@@ -95,6 +95,26 @@ WrightMap::wrightMap(Abil$theta, thr,
 ### Chart C
 
 ```{r}
+renderPlot({
 
+  s = 3 #input$x1_rows_selected
+    par(oma = c(0, 0, 0, 0))
+    thrWithBins<-item.side.LC(thr)
+    #if (length(s)) 
+   
+   # plot(x=thrWithBins$xpoint, y = thrWithBins$ypoint, type="p")
+    #points(thrWithBins[s, , drop = FALSE], pch = 19, cex = 2)
+  ggplot(thrWithBins, aes(xpoint, ypoint, label=item)) + 
+    geom_point()+
+    geom_text(aes(label=item),hjust=0, vjust=0) +
+    labs(x = "", y= "") + 
+    theme(
+      axis.text.x = element_blank(),
+      axis.text.y = element_blank(),
+      axis.ticks = element_blank(),
+      panel.background = element_rect(fill="white",colour = "black"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+})
 ```
 
